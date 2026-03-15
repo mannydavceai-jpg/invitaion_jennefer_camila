@@ -1210,19 +1210,19 @@
 
     // Forzar en CUALQUIER movimiento inicial (clic, scroll, touch, mousemove)
     const forceAudio = () => {
-      startMusic();
-      if (!music.paused) {
-        document.removeEventListener('click', forceAudio);
-        document.removeEventListener('touchstart', forceAudio);
-        document.removeEventListener('scroll', forceAudio);
-        document.removeEventListener('mousemove', forceAudio);
-      }
+      music.play().then(() => {
+        musicBtn.classList.remove('paused');
+        ["click", "touchstart", "touchmove", "touchend", "scroll", "mousemove"].forEach(evt => {
+          document.removeEventListener(evt, forceAudio);
+        });
+      }).catch(err => {
+        // Aún bloqueado por el navegador
+      });
     };
 
-    document.addEventListener('click', forceAudio);
-    document.addEventListener('touchstart', forceAudio);
-    document.addEventListener('scroll', forceAudio);
-    document.addEventListener('mousemove', forceAudio);
+    ["click", "touchstart", "touchmove", "touchend", "scroll", "mousemove"].forEach(evt => {
+      document.addEventListener(evt, forceAudio, { passive: true });
+    });
 
     /* ─── PARTICLES ─── */
     (function () {
